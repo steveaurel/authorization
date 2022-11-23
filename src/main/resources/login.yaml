@@ -1,0 +1,160 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/user/change/{role}:
+    put:
+      tags:
+      - user-controller
+      operationId: changeRole
+      parameters:
+      - name: role
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - USER
+          - ADMIN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPrincipal'
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/authentication/sign-up:
+    post:
+      tags:
+      - authentication-controller
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppUser'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/authentication/sign-in:
+    post:
+      tags:
+      - authentication-controller
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppUser'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/authentication/refresh-token:
+    post:
+      tags:
+      - authentication-controller
+      operationId: refreshToken
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/admin/all:
+    get:
+      tags:
+      - admin-controller
+      operationId: findAllUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+components:
+  schemas:
+    AppUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surName:
+          type: string
+        codiceFiscale:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        createTime:
+          type: string
+          format: date-time
+        role:
+          type: string
+          enum:
+          - USER
+          - ADMIN
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    GrantedAuthority:
+      type: object
+      properties:
+        authority:
+          type: string
+    UserPrincipal:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        password:
+          type: string
+        user:
+          $ref: '#/components/schemas/AppUser'
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantedAuthority'
+        accountNonExpired:
+          type: boolean
+        accountNonLocked:
+          type: boolean
+        credentialsNonExpired:
+          type: boolean
+        enabled:
+          type: boolean
